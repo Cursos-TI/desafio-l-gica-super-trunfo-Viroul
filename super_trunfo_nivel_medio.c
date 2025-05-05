@@ -2,7 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 
-
+//VARIAVEIS DA CARTA
 struct Carta {
     int num_estados;                    // Quantidade de estados cadastrados
     int cidades_por_estado[8];          // Quantidade de cidades cadastradas por estado
@@ -102,26 +102,6 @@ void adicionar_estado(struct Carta *Dados_do_estado) {
         printf("\nDigite o nome do Estado: ");
         scanf(" %49[^\n]", estado_nome);
         
-        // Confirmação se o nome do estado está correto
-        int confirmar_estado = 0;
-        do {
-            printf("\nO NOME '%s' ESTÁ CORRETO?\n\n", estado_nome);
-            printf("1. Confirmar\n");
-            printf("2. Corrigir\n");
-            printf("\nDigite uma opção: ");
-            
-            // Condição para aceitar apenas "1" ou "2"
-            while (scanf(" %d", &confirmar_estado) != 1 || (confirmar_estado != 1 && confirmar_estado != 2)) {
-                printf("Entrada INVÁLIDA. Por favor, insira 1 para confirmar ou 2 para Corrigir: ");
-                while (getchar() != '\n');  // Limpa o buffer de entrada
-            }
-            if (confirmar_estado == 2) {
-                // Se escolher "2", volta para Corrigir o nome
-                printf("\nDigite o nome do Estado: ");
-                scanf(" %49[^\n]", estado_nome);
-            }
-        } while (confirmar_estado != 1); // Se for "2", ele volta para pedir o nome do estado
-    
         // Verificar se o estado já foi cadastrado
         if (estado_existente(Dados_do_estado, estado_nome)) {
             printf("Estado já cadastrado.\n");
