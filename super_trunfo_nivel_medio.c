@@ -101,7 +101,7 @@ void adicionar_estado(struct Carta *Dados_do_estado) {
     while (1) {
         printf("\nDigite o nome do Estado: ");
         scanf(" %49[^\n]", estado_nome);
-        
+
         // Verificar se o estado já foi cadastrado
         if (estado_existente(Dados_do_estado, estado_nome)) {
             printf("Estado já cadastrado.\n");
@@ -205,16 +205,12 @@ void adicionar_cidade(struct Carta *Dados_da_cidade) {
     printf("  Pontos turísticos: %d\n", Dados_da_cidade->pontos_turisticos[Dados_da_cidade->estado_atual][cidade_index]);
     printf("\n      Carta cadastrada com sucesso!\n");
     printf("\n===========================================\n");
-    
-    
-
 }
 
 // Buscar carta por código e verificação de código da cidade
 void buscar_carta_por_codigo(struct Carta *dados, const char *codigo) {
     
     int carta_encontrada = 0;
-
     do {
         if (verificar_carta_existente(dados, codigo)) {
         // exibe os detalhes
