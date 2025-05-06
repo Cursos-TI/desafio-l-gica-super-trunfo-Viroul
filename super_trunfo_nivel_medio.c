@@ -183,8 +183,8 @@ void adicionar_cidade(struct Carta *Dados_da_cidade) {
     printf("Estado: %s\n", Dados_da_cidade->Estado_nome[Dados_da_cidade->estado_atual]);
     printf("Cidade: %s\n", Dados_da_cidade->cidades[Dados_da_cidade->estado_atual][cidade_index]);
     printf("População: %d\n", Dados_da_cidade->populacao[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("Área: %.2f km²\n", Dados_da_cidade->area[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("Densidade populacional: %.2f hab/km²\n", Dados_da_cidade->Densidade_populacional[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("Área: %.2f km\n", Dados_da_cidade->area[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("Densidade populacional: %.2f\n", Dados_da_cidade->Densidade_populacional[Dados_da_cidade->estado_atual][cidade_index]);
     printf("PIB: %.2lf\n", Dados_da_cidade->PIB[Dados_da_cidade->estado_atual][cidade_index]);
     printf("PIB per capita: %.2f reais\n", Dados_da_cidade->PIB_per_capita[Dados_da_cidade->estado_atual][cidade_index]);
     printf("Pontos turísticos: %d\n", Dados_da_cidade->pontos_turisticos[Dados_da_cidade->estado_atual][cidade_index]);
@@ -201,8 +201,8 @@ void buscar_carta_por_codigo(struct Carta *dados, const char *codigo) {
         printf("  Estado: %s\n", dados->Estado_nome[estado_index]);
         printf("  Cidade: %s\n", dados->cidades[estado_index][cidade_index]);
         printf("  População: %d\n", dados->populacao[estado_index][cidade_index]);
-        printf("  Área: %.2f km²\n", dados->area[estado_index][cidade_index]);
-        printf("  Densidade populacional: %.2f hab/km²\n", dados->Densidade_populacional[estado_index][cidade_index]);
+        printf("  Área: %.2f km\n", dados->area[estado_index][cidade_index]);
+        printf("  Densidade populacional: %.2f\n", dados->Densidade_populacional[estado_index][cidade_index]);
         printf("  PIB: %.2lf\n", dados->PIB[estado_index][cidade_index]);
         printf("  PIB per capita: %.2f reais\n", dados->PIB_per_capita[estado_index][cidade_index]);
         printf("  Pontos turísticos: %d\n", dados->pontos_turisticos[estado_index][cidade_index]);
