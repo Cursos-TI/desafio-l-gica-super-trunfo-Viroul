@@ -389,7 +389,7 @@ int main() {
             }
         }
 
-    }while (categoria_cartas != 2);
+    } while (categoria_cartas != 2);
     
     return 0;
 }
