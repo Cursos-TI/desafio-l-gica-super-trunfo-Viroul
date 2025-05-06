@@ -2,25 +2,26 @@
 #include <string.h>
 #include <ctype.h>
 
-// VARIÁVEIS DA CARTA
+//VARIAVEIS DA CARTA
 struct Carta {
-    int num_estados;                                    // Quantidade de estados cadastrados
-    int cidades_por_estado[8];                          // Quantidade de cidades cadastradas por estado
-    int estado_atual;
-    int num_cartas;
-    int cartas_selecionadas[2][2];
+    int num_estados;                    // Quantidade de estados cadastrados
+    int cidades_por_estado[8];          // Quantidade de cidades cadastradas por estado
+    int estado_atual;                   // Índice do estado atual
+    int num_cartas;                     // Quantidade de cartas cadastradas
+    int cartas_selecionadas[2][2];      // Quantidade de cartas selecionadas
 
-    char codigo[8][4][4];
-    char Estado_nome[8][50];
-    char cidades[8][4][50];
-    int populacao[8][4];
-    float area[8][4];
-    float Densidade_populacional[8][4];
-    float PIB_per_capita[8][4];
-    double PIB[8][4];
-    int pontos_turisticos[8][4];
+    // PROPRIEDADES DAS CARTAS
+    char codigo[8][4][4];               // Codigo da carta
+    char Estado_nome[8][50];            // Nome do estado (máximo de 8 estados)
+    char cidades[8][4][50];             // Até 4 cidades por estado
+    int populacao[8][4];                // População de cada cidade
+    float area[8][4];                   // Área de cada cidade
+    float Densidade_populacional[8][4]; // Densidade populacional de cada cidade
+    float PIB_per_capita[8][4];         // PIB per capita de cada cidade
+    double PIB[8][4];                   // PIB da cidade
+    int pontos_turisticos[8][4];        // Pontos turísticos da cidade
+
 };
-
 // Verifica se uma carta com o código existe
 int carta_existe(struct Carta *informacoes, const char *codigo_busca) {
     for (int i = 0; i < informacoes->num_estados; i++) {
