@@ -273,7 +273,7 @@ int main() {
                 if (Especificacoes_da_Carta.num_cartas < 2) {//retorna ao cadastro
                     printf("CARTAS INSUFICIENTES PARA COMEÇAR O JOGO (MÍNIMO 2 CARTAS)\n"); // Verifica se o número de estados é insuficiente (mínimo de 2)
                 } else {
-                    printf("Cadastro finalizado. Iniciando o jogo...\n");
+                    printf("Cadastro finalizado. Iniciando o jogo..\n");
                     categoria_cadastro = 5; // Finaliza o cadastro e sai do loop
                 }
                 break;
