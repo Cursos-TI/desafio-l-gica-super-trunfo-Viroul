@@ -2,76 +2,54 @@
 #include <string.h>
 #include <ctype.h>
 
-//VARIAVEIS DA CARTA
+// VARIÁVEIS DA CARTA
 struct Carta {
-    int num_estados;                    // Quantidade de estados cadastrados
-    int cidades_por_estado[8];          // Quantidade de cidades cadastradas por estado
-    int estado_atual;                   // Índice do estado atual
-    int num_cartas;                     // Quantidade de cartas cadastradas
-    int cartas_selecionadas[2][2];      // Quantidade de cartas selecionadas
+    int num_estados;                                    // Quantidade de estados cadastrados
+    int cidades_por_estado[8];                          // Quantidade de cidades cadastradas por estado
+    int estado_atual;
+    int num_cartas;
+    int cartas_selecionadas[2][2];
 
-    // PROPRIEDADES DAS CARTAS
-    char Estado_nome[8][50];            // Nome do estado (máximo de 8 estados)
-    char cidades[8][4][50];             // Até 4 cidades por estado
-    int populacao[8][4];                // População de cada cidade
-    float area[8][4];                   // Área de cada cidade
-    float Densidade_populacional[8][4]; // Densidade populacional de cada cidade
-    float PIB_per_capita[8][4];         // PIB per capita de cada cidade
-    double PIB[8][4];                   // PIB da cidade
-    int pontos_turisticos[8][4];        // Pontos turísticos da cidade
-
+    char codigo[8][4][4];
+    char Estado_nome[8][50];
+    char cidades[8][4][50];
+    int populacao[8][4];
+    float area[8][4];
+    float Densidade_populacional[8][4];
+    float PIB_per_capita[8][4];
+    double PIB[8][4];
+    int pontos_turisticos[8][4];
 };
 
-// Gera o código para um estado e uma cidade
-void gerar_codigo(char *codigo, int estado_index, int cidade_index) {
-    sprintf(codigo, "%c%02d", 'A' + estado_index, cidade_index + 1);
-}
-
-// Exibe todas as cartas cadastradas com seus códigos
-void listar_cartas(struct Carta *informacoes) {
-    printf("\n--------Cartas Cadastradas--------\n");
+// Verifica se uma carta com o código existe
+int carta_existe(struct Carta *informacoes, const char *codigo_busca) {
     for (int i = 0; i < informacoes->num_estados; i++) {
-        printf("\nEstado %c:\n", 'A' + i);
         for (int j = 0; j < informacoes->cidades_por_estado[i]; j++) {
-            char codigo[4];
-            gerar_codigo(codigo, i, j);
-            printf("Código da carta: %s\n", codigo);
-        }
-    }
-    // Exibe o total de cartas cadastradas
-    printf("\nTotal de cartas cadastradas: %d\n", informacoes->num_cartas);
-    printf("----------------------------------");
+            if (strcmp(informacoes->codigo[i][j], codigo_busca) == 0) {
+                return 1;}}}
+    return 0;
 }
 
-// Verificar se a carta existe
-int verificar_carta_existente(struct Carta *dados, const char *codigo) {
-    int estado_index = codigo[0] - 'A';      // Converte a letra em um indice do estado
-    int cidade_index = (codigo[1] - '0') * 10 + (codigo[2] - '0') - 1; // Converte os digitos da cidade
-
-    // Verifica se o código esta entre 01 e 04
-    if (cidade_index < 0 || cidade_index >= 4) {
-        printf("\nCódigo de cidade inválido. O código deve ser de 01 a 04.\n");
-        return 0; // Carta não encontrada
-    }
-
-    if (estado_index >= 0 && estado_index < dados->num_estados &&
-        cidade_index >= 0 && cidade_index < dados->cidades_por_estado[estado_index]) {
-        return 1; // Carta encontrada
-    } else {
-        return 0; // Carta não encontrada
-    }
+// Encontra os índices da carta pelo código
+int encontrar_indices_carta(struct Carta *dados, const char *codigo, int *estado_index, int *cidade_index) {
+    for (int i = 0; i < dados->num_estados; i++) {
+        for (int j = 0; j < dados->cidades_por_estado[i]; j++) {
+            if (strcmp(dados->codigo[i][j], codigo) == 0) {
+                *estado_index = i;
+                *cidade_index = j;
+                return 1;}}}
+    return 0;
 }
 
 // Verifica se o estado já existe
 int estado_existente(struct Carta *verificar_estado, const char *estado_nome) {
-    // Verifica se o estado já foi cadastrado
     for (int i = 0; i < verificar_estado->num_estados; i++) {
         if (strcmp(verificar_estado->Estado_nome[i], estado_nome) == 0) {
-            verificar_estado->estado_atual = i;  // Define o índice do estado existente como o atual
-            return 1;  // Estado encontrado
+            verificar_estado->estado_atual = i; // Define o índice do estado existente como o atual
+            return 1; // Estado encontrado
         }
     }
-    return 0;  // Estado não encontrado
+    return 0; // Estado não encontrado
 }
 
 // Verifica se a cidade já existe
@@ -87,7 +65,7 @@ int cidade_existente(struct Carta *verificar_cidade, const char *cidade_nome) {
     return 0; // Cidade não encontrada
 }
 
-// Cadastro de um estado
+// Cadastro de estado
 void adicionar_estado(struct Carta *Dados_do_estado) {
     // Limite de estados atingido
     if (Dados_do_estado->num_estados >= 8) {
@@ -96,7 +74,7 @@ void adicionar_estado(struct Carta *Dados_do_estado) {
     }
 
     char estado_nome[50];
-    
+
     printf("\n====== CADASTRE UM NOVO ESTADO ========\n");
     while (1) {
         printf("\nDigite o nome do Estado: ");
@@ -117,13 +95,29 @@ void adicionar_estado(struct Carta *Dados_do_estado) {
     }
 }
 
-// Cadastro de uma cidade
+// Cadastro de cidade
 void adicionar_cidade(struct Carta *Dados_da_cidade) {
     if (Dados_da_cidade->cidades_por_estado[Dados_da_cidade->estado_atual] >= 4) {
         printf("Limite de cidades para este estado atingido.\n");
         return;
     }
-    char cidade_nome[50]; //variavel
+    //variaveis temporarias
+    char cidade_nome[50];
+    char codigo_carta[4];
+
+    while (1) {
+        //Recebendo o codigo da carta
+        printf("\nDigite o código da carta (ex: A01): ");
+        scanf(" %3s", codigo_carta);
+        
+        //codigo ja utilizado
+        if (carta_existe(Dados_da_cidade, codigo_carta)) {
+            printf("Código já utilizado. Tente outro.\n");
+        } else {
+            break;
+        }
+    }
+
     while (1) {
         printf("\nDigite o nome da Cidade: ");
         scanf(" %49[^\n]", cidade_nome);
@@ -135,226 +129,159 @@ void adicionar_cidade(struct Carta *Dados_da_cidade) {
             break; // Cidade válida
         }
     }
-    
     // Adiciona a cidade à lista do estado atual
     int cidade_index = Dados_da_cidade->cidades_por_estado[Dados_da_cidade->estado_atual];
+    strcpy(Dados_da_cidade->codigo[Dados_da_cidade->estado_atual][cidade_index], codigo_carta);
     strcpy(Dados_da_cidade->cidades[Dados_da_cidade->estado_atual][cidade_index], cidade_nome);
     Dados_da_cidade->cidades_por_estado[Dados_da_cidade->estado_atual]++;
-    
-    // Solicita os dados adicionais da cidade
+
+    // Solicitando os dados adicionais da cidade
 
     // Solicitando a População com verificação
     printf("Digite a População (exemplo: 12324): ");
-    while(scanf(" %d", &Dados_da_cidade->populacao[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
+    while (scanf(" %d", &Dados_da_cidade->populacao[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
         printf("\nEntrada INVÁLIDA! Por favor, digite um número válido\n\n");
-        while (getchar() != '\n');  // Limpa o buffer de entrada
+        while (getchar() != '\n'); // Limpa o buffer de entrada
         printf("Digite a População (exemplo: 12324): ");
     }
-
     // Solicita a área com verificação
     printf("Digite a Área em km2 (exemplo: 1000.25): ");
-    while(scanf(" %f", &Dados_da_cidade->area[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
-        printf("\nEntrada INVÁLIDA! Por favor, digite um número válido para a área\n\n");
-        while (getchar() != '\n');  // Limpa o buffer de entrada
+    while (scanf(" %f", &Dados_da_cidade->area[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
+        printf("\nEntrada INVÁLIDA! Por favor, digite um número válido\n\n");
+        while (getchar() != '\n'); // Limpa o buffer de entrada
         printf("Digite a Área em km2 (exemplo: 1000.25): ");
     }
-
     // Solicita o PIB com verificação
     printf("Digite o PIB (exemplo: 214453.00): ");
-    while(scanf(" %lf", &Dados_da_cidade->PIB[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
-        printf("\nEntrada INVÁLIDA! Por favor, digite um número válido para o PIB\n\n");
-        while (getchar() != '\n');  // Limpa o buffer de entrada
+    while (scanf(" %lf", &Dados_da_cidade->PIB[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
+        printf("\nEntrada INVÁLIDA! Por favor, digite um número válido\n\n");
+        while (getchar() != '\n'); // Limpa o buffer de entrada
         printf("Digite o PIB (exemplo: 214453.00): ");
     }
-
     // Solicita os pontos turísticos com verificação
     printf("Digite quantos Pontos turísticos tem a cidade (exemplo: 5): ");
-    while(scanf(" %d", &Dados_da_cidade->pontos_turisticos[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
-        printf("\nEntrada INVÁLIDA! Por favor, digite um número válido para os pontos turísticos\n\n");
-        while (getchar() != '\n');  // Limpa o buffer de entrada
+    while (scanf(" %d", &Dados_da_cidade->pontos_turisticos[Dados_da_cidade->estado_atual][cidade_index]) != 1) {
+        printf("\nEntrada INVÁLIDA! Por favor, digite um número válido\n\n");
+        while (getchar() != '\n'); // Limpa o buffer de entrada
         printf("Digite os Pontos turísticos (exemplo: 5): ");
     }
 
     // Calculando a densidade populacional
-    Dados_da_cidade->Densidade_populacional[Dados_da_cidade->estado_atual][cidade_index] = 
+    Dados_da_cidade->Densidade_populacional[Dados_da_cidade->estado_atual][cidade_index] =
         (float)Dados_da_cidade->populacao[Dados_da_cidade->estado_atual][cidade_index] /
         Dados_da_cidade->area[Dados_da_cidade->estado_atual][cidade_index];
-
     // Calculando o PIB per capita
     Dados_da_cidade->PIB_per_capita[Dados_da_cidade->estado_atual][cidade_index] =
         Dados_da_cidade->PIB[Dados_da_cidade->estado_atual][cidade_index] /
         (float)Dados_da_cidade->populacao[Dados_da_cidade->estado_atual][cidade_index];
 
-    //CARTA CADASTRADA
-    // Incrementa o contador de cartas
-    Dados_da_cidade->num_cartas++;
-    
+    Dados_da_cidade->num_cartas++; // Incrementa o contador de cartas e CARTA CADASTRADA
     // Mostrar os detalhes da carta cadastrada
-    char codigo[4];
-    gerar_codigo(codigo, Dados_da_cidade->estado_atual, cidade_index);
-
-    printf("\n=======Detalhes da carta cadastrada=======\n");
-    printf("\nCódigo da carta: %s\n", codigo);
-    printf("  Estado: %s\n", Dados_da_cidade->Estado_nome[Dados_da_cidade->estado_atual]);
-    printf("  Cidade: %s\n", Dados_da_cidade->cidades[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("  População: %d\n", Dados_da_cidade->populacao[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("  Área: %.2f km2\n", Dados_da_cidade->area[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("  Densidade populacional: %.2f pessoas por km2\n", Dados_da_cidade->Densidade_populacional[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("  PIB: %.2lf\n", Dados_da_cidade->PIB[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("  PIB per capita: %.2f reais\n", Dados_da_cidade->PIB_per_capita[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("  Pontos turísticos: %d\n", Dados_da_cidade->pontos_turisticos[Dados_da_cidade->estado_atual][cidade_index]);
-    printf("\n      Carta cadastrada com sucesso!\n");
-    printf("\n===========================================\n");
+    printf("\n======= Detalhes da carta cadastrada =======\n");
+    printf("Código da carta: %s\n", Dados_da_cidade->codigo[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("Estado: %s\n", Dados_da_cidade->Estado_nome[Dados_da_cidade->estado_atual]);
+    printf("Cidade: %s\n", Dados_da_cidade->cidades[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("População: %d\n", Dados_da_cidade->populacao[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("Área: %.2f km²\n", Dados_da_cidade->area[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("Densidade populacional: %.2f hab/km²\n", Dados_da_cidade->Densidade_populacional[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("PIB: %.2lf\n", Dados_da_cidade->PIB[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("PIB per capita: %.2f reais\n", Dados_da_cidade->PIB_per_capita[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("Pontos turísticos: %d\n", Dados_da_cidade->pontos_turisticos[Dados_da_cidade->estado_atual][cidade_index]);
+    printf("============================================\n");
 }
 
-// Buscar carta por código e verificação de código da cidade
+// Buscar carta por código
 void buscar_carta_por_codigo(struct Carta *dados, const char *codigo) {
-    
-    int carta_encontrada = 0;
-    do {
-        if (verificar_carta_existente(dados, codigo)) {
-        // exibe os detalhes
-        int estado_index = codigo[0] - 'A';      // Converte a letra em índice do estado
-        int cidade_index = (codigo[1] - '0') * 10 + (codigo[2] - '0') - 1; // Converte os dígitos da cidade
+    int estado_index, cidade_index;
 
-        printf("\n=======Carta encontrada=======\n"); // ADICIONAR DENSIDADE E PIB PER CAPITA CONSERTAAAAAAAAAAAAAAAAAAAAAAAA
+    if (encontrar_indices_carta(dados, codigo, &estado_index, &cidade_index)) {
+        printf("\n======= Carta encontrada =======\n");
         printf("Código da carta: %s\n", codigo);
         printf("  Estado: %s\n", dados->Estado_nome[estado_index]);
         printf("  Cidade: %s\n", dados->cidades[estado_index][cidade_index]);
         printf("  População: %d\n", dados->populacao[estado_index][cidade_index]);
-        printf("  Área: %.2f km2\n", dados->area[estado_index][cidade_index]);
-        printf("  Densidade populacional: %.2f pessoas por km2\n", dados->Densidade_populacional[estado_index][cidade_index]);
+        printf("  Área: %.2f km²\n", dados->area[estado_index][cidade_index]);
+        printf("  Densidade populacional: %.2f hab/km²\n", dados->Densidade_populacional[estado_index][cidade_index]);
         printf("  PIB: %.2lf\n", dados->PIB[estado_index][cidade_index]);
         printf("  PIB per capita: %.2f reais\n", dados->PIB_per_capita[estado_index][cidade_index]);
         printf("  Pontos turísticos: %d\n", dados->pontos_turisticos[estado_index][cidade_index]);
-        printf("=============================\n");
-        
-        carta_encontrada = 1;
-        
+        printf("================================\n");
     } else {
         printf("\nCódigo inválido ou carta não encontrada.\n");
-    } 
-} while (!carta_encontrada);
+    }
 }
 
-// Seleciona as cartas para o supertrunfo
+// Seleciona carta para comparação
 int selecionar_carta(struct Carta *cartas, char *carta, int posicao) {
-    if (verificar_carta_existente(cartas, carta)) {
-        int estado_index = carta[0] - 'A';  // Converte letra para índice do estado
-        int cidade_index = (carta[1] - '0') * 10 + (carta[2] - '0') - 1;  // Converte os dígitos da cidade
-
+    int estado_index, cidade_index;
+    if (encontrar_indices_carta(cartas, carta, &estado_index, &cidade_index)) {
         // Armazena a carta na posição correspondente (0 para a primeira, 1 para a segunda)
         cartas->cartas_selecionadas[posicao][0] = estado_index;
         cartas->cartas_selecionadas[posicao][1] = cidade_index;
 
         buscar_carta_por_codigo(cartas, carta);
-        return 1;  // Retorna 1 indicando sucesso
+        return 1; // Retorna 1 indicando sucesso
     } else {
         printf("\nCarta não encontrada. TENTE NOVAMENTE.\n");
         return 0;  // Retorna 0 indicando falha
     }
 }
 
+// Lista todas as cartas cadastradas
+void listar_cartas(struct Carta *informacoes) {
+    printf("\n-------- Cartas Cadastradas --------\n");
+    for (int i = 0; i < informacoes->num_estados; i++) {
+        printf("\nEstado: %s\n", informacoes->Estado_nome[i]);
+        for (int j = 0; j < informacoes->cidades_por_estado[i]; j++) {
+            printf("  Código: %s | Cidade: %s\n", informacoes->codigo[i][j], informacoes->cidades[i][j]);
+        }
+    }
+    printf("\nTotal de cartas cadastradas: %d\n", informacoes->num_cartas);
+    printf("------------------------------------\n");
+}
+
 int main() {
     struct Carta Especificacoes_da_Carta = {0}; // Inicializando a struct com valores padrão
-    int categoria_cadastro, opcao_estado;
+    int categoria_cadastro;
     int categoria_cartas, opcao_de_comparacao;
-   
-    do {// Cadastro de cartas
-        // Exibicao do menu
+
+    do {
+        // Exibição do menu
         printf("\n******* MENU PARA CADASTRO DE CARTAS *******\n\n");
-        printf("1. Cadastrar Estado\n");
-        printf("2. Cadastrar Cidade\n");
-        printf("3. Finalizar Cadastros e Começar o jogo\n");
+        printf("1. Cadastrar carta\n");
+        printf("2. Finalizar Cadastros e Começar o jogo\n");
         printf("\nDigite uma opção: ");
-         // Verifica se a entrada é um numero
+
+        // Verifica se a entrada é um número
         while (scanf(" %d", &categoria_cadastro) != 1) {
-
-            // Se não for um numero, mostra uma mensagem de erro e limpa a entrada
-            printf("Entrada INVÁLIDA! Por favor, digite um número válido\n");
-
-            printf("\nMenu para cadastro de cartas\n");
-            printf("1. Cadastrar Estado\n");
-            printf("2. Cadastrar Cidade\n");
-            printf("3. Finalizar Cadastros e Começar o jogo\n");
+            printf("Entrada INVÁLIDA! Por favor, digite um número válido\n"); // Se não for um numero, mostra uma mensagem de erro e limpa a entrada
+            printf("\nMENU PARA CADASTRO DE CARTAS\n");
+            printf("1. Cadastrar carta\n");
+            printf("2. Finalizar Cadastros e Começar o jogo\n");
             printf("\nDigite uma opção: ");
-            while (getchar() != '\n'); // Limpa o buffer de entrada
+            while (getchar() != '\n'); // Limpa o buffer
         }
 
         switch (categoria_cadastro) {
-        case 1: // 1. Cadastrar estado
-            adicionar_estado(&Especificacoes_da_Carta);
-
-            // Escolhe se criará uma cidade no estado que esta sendo cadastrado
-            printf("\n1. Cadastrar uma cidade neste estado\n");  
-            printf("2. voltar para o menu\n");
-            printf("\nDigite uma opção: ");
-            while (scanf(" %d", &opcao_estado) != 1){
-                
-                // Se não for um numero, mostra uma mensagem de erro e limpa a entrada
-                printf("Entrada INVÁLIDA! Por favor, digite um número válido\n");
-                
-                printf("\n1. Cadastrar uma cidade neste estado\n");  
-                printf("2. voltar para o menu\n");
-                printf("\nDigite uma opção: ");
-                while (getchar() != '\n');
-            }
-
-            switch (opcao_estado){ // ADICIONA UMA CIDADE
-                case 1: // 1. cadastrar uma cidade no estado atual
-                    adicionar_cidade(&Especificacoes_da_Carta);
-                    break;  // Evita que continue para o próximo 'case'
-                    
-                case 2: // 2. Voltar para o menu principal
-                    break;
-                default:
-                    printf("OPÇÃO INVÁLIDA.\n");
-            }
-            break; // ESTADO CADASTRADO COM SUCESSO
-
-        case 2: // 2. cadastrar cidade
-            if (Especificacoes_da_Carta.num_estados == 0) { // Verifica se há estado cadastrado 
-                printf("\nNenhum estado cadastrado.\n");
+            case 1: // 1. cadastrar carta
+                adicionar_estado(&Especificacoes_da_Carta);
+                adicionar_cidade(&Especificacoes_da_Carta);
                 break;
-            } else { // Escolhe o estado para cadastrar a cidade
-                printf("\nESCOLHA UM ESTADO PARA CADASTRAR A CIDADE\n\nCADASTRADOS:\n");
-                for (int i = 0; i < Especificacoes_da_Carta.num_estados; i++) {
-                    printf("Estado %c\n\n", 'A' + i);
-                    }
-                char letra;
-                printf("\nDigite uma opção: ");
-                scanf(" %c", &letra);  // Leitura da escolha do estado
 
-                letra = toupper(letra); // Converter para maiúscula
-
-                // Verificar se é uma letra válida antes de converter para índice
-                if (letra < 'A' || letra >= 'A' + Especificacoes_da_Carta.num_estados) {
-                    printf("OPÇÃO INVÁLIDA! Escolha entre A e %c.\n", 'A' + Especificacoes_da_Carta.num_estados - 1);
-                
+            case 2:
+                if (Especificacoes_da_Carta.num_cartas < 2) {//retorna ao cadastro
+                    printf("CARTAS INSUFICIENTES PARA COMEÇAR O JOGO (MÍNIMO 2 CARTAS)\n"); // Verifica se o número de estados é insuficiente (mínimo de 2)
                 } else {
-                    int indice = letra - 'A';  // Converter a letra para índice numérico
-                    Especificacoes_da_Carta.estado_atual = indice;
-                    adicionar_cidade(&Especificacoes_da_Carta);
+                    printf("Cadastro finalizado. Iniciando o jogo...\n");
+                    categoria_cadastro = 5; // Finaliza o cadastro e sai do loop
                 }
-            }
-            break;
-
-        case 3: //finaliza os cadastros
-            if (Especificacoes_da_Carta.num_cartas < 2) {
-                // Verifica se o número de estados é insuficiente (mínimo de 2)
-                printf("CARTAS INSUFICIENTES PARA COMEÇAR O JOGO (MÍNIMO 2 CARTAS)\n");
-                //retorna ao cadastro
-            } else{
-                printf("cadastro finalizado.\n");
-                // Finaliza o cadastro e sai do loop
-                categoria_cadastro = 5;
                 break;
-            }
-            break;
 
-        default:
-            printf("OPÇÃO INVÁLIDA. TENTE NOVAMENTE.\n");
+            default:
+                printf("OPÇÃO INVÁLIDA. TENTE NOVAMENTE.\n");
+                break;
         }
+
     } while (categoria_cadastro != 5);
 
     do {//Comparacao das cartas
@@ -386,7 +313,6 @@ int main() {
                 while (!carta_valida) {
                     printf("\nDigite o codigo da PRIMEIRA carta (ex: A01): ");
                     scanf(" %3s", carta_1);
-                    carta_1[0] = toupper(carta_1[0]);
                     carta_valida = selecionar_carta(&Especificacoes_da_Carta, carta_1, 0); //posicao [0]
                 }
 
@@ -397,7 +323,6 @@ int main() {
                     listar_cartas(&Especificacoes_da_Carta);
                     printf("\nDigite o codigo da SEGUNDA carta (ex: A02): ");
                     scanf(" %3s", carta_2);
-                    carta_2[0] = toupper(carta_2[0]);
                     if (strcmp(carta_1, carta_2) == 0) {
                         printf("Você já escolheu essa carta. Digite um código diferente.\n");
                         continue; // volta ao início do loop
